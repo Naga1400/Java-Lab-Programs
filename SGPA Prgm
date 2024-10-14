@@ -1,0 +1,73 @@
+import java.util.Scanner;
+
+class Student {
+    private String usn; 
+    private String name; 
+    private int[] credits;
+    private int[] marks;
+    private int numCourses;
+
+  
+    public Student(int numCourses) {
+        this.numCourses = numCourses;
+        credits = new int[numCourses];
+        marks = new int[numCourses];
+    }
+
+   
+    public void acceptDetails() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter USN: ");
+        usn = scanner.nextLine();
+
+        System.out.print("Enter Name: ");
+        name = scanner.nextLine();
+
+        for (int i = 0; i < numCourses; i++) {
+            System.out.print("Enter credits for course " + (i + 1) + ": ");
+            credits[i] = scanner.nextInt();
+
+            System.out.print("Enter marks for course " + (i + 1) + ": ");
+            marks[i] = scanner.nextInt();
+        }
+    }
+
+   
+    public void displayDetails() {
+        System.out.println("USN: " + usn);
+        System.out.println("Name: " + name);
+        for (int i = 0; i < numCourses; i++) {
+            System.out.println("Course " + (i + 1) + ": Credits = " + credits[i] + ", Marks = " + marks[i]);
+        }
+        System.out.printf("SGPA: %.2f%n", calculateSGPA());
+    }
+
+ 
+    public double calculateSGPA() {
+        double totalCredits = 0;
+        double weightedMarks = 0;
+
+        for (int i = 0; i < numCourses; i++) {
+            totalCredits += credits[i];
+            weightedMarks += (marks[i] / 10.0) * credits[i]; 
+        }
+
+        return (totalCredits == 0) ? 0 : (weightedMarks / totalCredits);
+    }
+}
+
+public class Main{
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter number of courses: ");
+        int numCourses = scanner.nextInt();
+       
+        Student student = new Student(numCourses);
+   
+        student.acceptDetails();
+
+        student.displayDetails();
+    }
+}
