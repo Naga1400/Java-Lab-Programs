@@ -32,7 +32,7 @@ System.out.println("Area of Triangle is :"+result);
 
 class Circle extends Shape{
 Circle(){
-System.out.println("Enter the Two values to Calculate Area of Circle :");
+System.out.println("Enter the One value to Calculate Area of Circle :");
 val1=s.nextDouble();
 }
 void printArea(){
