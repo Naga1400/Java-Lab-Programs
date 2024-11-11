@@ -57,9 +57,25 @@ class CurAcct extends Account {
 
     public CurAcct(String customerName, String accountNumber, double initialDeposit) {
         super(customerName, accountNumber, initialDeposit, "Current");
+        
+        if (initialDeposit < MINIMUM_BALANCE) {
+            System.out.println("Error: Initial deposit must be at least " + MINIMUM_BALANCE);
+            this.balance = 0;         }
+    }
+
+    public void deposit(double amount) {
+        super.deposit(amount);
+        if (balance >= MINIMUM_BALANCE) {
+            System.out.println("Your account meets the minimum balance requirement.");
+        }
     }
 
     public void withdraw(double amount) {
+        if (balance - amount < MINIMUM_BALANCE) {
+            System.out.println("Warning: Withdrawing this amount will bring your balance below the minimum. A service charge of "
+                               + SERVICE_CHARGE + " will be applied.");
+        }
+
         if (amount <= balance) {
             balance -= amount;
             checkMinimumBalance();
@@ -76,6 +92,7 @@ class CurAcct extends Account {
         }
     }
 }
+
 
 public class Bank {
     public static void main(String[] args) {
