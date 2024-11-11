@@ -1,0 +1,149 @@
+import java.util.Scanner;
+
+class Account {
+    protected String customerName;
+    protected String accountNumber;
+    protected double balance;
+    protected String accountType;
+
+    public Account(String customerName, String accountNumber, double initialDeposit, String accountType) {
+        this.customerName = customerName;
+        this.accountNumber = accountNumber;
+        this.balance = initialDeposit;
+        this.accountType = accountType;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposit Successful. Updated Balance: " + balance);
+        } else {
+            System.out.println("Deposit amount must be positive.");
+        }
+    }
+
+    public void displayBalance() {
+        System.out.println("Balance: " + balance);
+    }
+}
+
+class SavAcct extends Account {
+    private double interestRate;
+
+    public SavAcct(String customerName, String accountNumber, double initialDeposit, double interestRate) {
+        super(customerName, accountNumber, initialDeposit, "Savings");
+        this.interestRate = interestRate;
+    }
+
+    public void computeAndDepositInterest() {
+        double interest = balance * (interestRate / 100);
+        balance += interest;
+        System.out.println("Interest Deposited: " + interest + ", Updated Balance: " + balance);
+    }
+
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawal Successful. Updated Balance: " + balance);
+        } else {
+            System.out.println("Insufficient balance for withdrawal.");
+        }
+    }
+}
+
+class CurAcct extends Account {
+    private static final double MINIMUM_BALANCE = 500;
+    private static final double SERVICE_CHARGE = 50;
+
+    public CurAcct(String customerName, String accountNumber, double initialDeposit) {
+        super(customerName, accountNumber, initialDeposit, "Current");
+    }
+
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            checkMinimumBalance();
+            System.out.println("Withdrawal Successful. Updated Balance: " + balance);
+        } else {
+            System.out.println("Insufficient balance for withdrawal.");
+        }
+    }
+
+    private void checkMinimumBalance() {
+        if (balance < MINIMUM_BALANCE) {
+            balance -= SERVICE_CHARGE;
+            System.out.println("Balance fell below minimum. Service charge imposed. Updated Balance: " + balance);
+        }
+    }
+}
+
+public class Bank {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter Customer Name:");
+        String customerName = scanner.nextLine();
+        System.out.println("Enter Account Number:");
+        String accountNumber = scanner.nextLine();
+        System.out.println("Enter Initial Deposit:");
+        double initialDeposit = scanner.nextDouble();
+        System.out.println("Enter Account Type (1 for Savings, 2 for Current):");
+        int accountType = scanner.nextInt();
+
+        Account account;
+
+        if (accountType == 1) {
+            System.out.println("Enter Interest Rate for Savings Account:");
+            double interestRate = scanner.nextDouble();
+            account = new SavAcct(customerName, accountNumber, initialDeposit, interestRate);
+        } else {
+            account = new CurAcct(customerName, accountNumber, initialDeposit);
+        }
+
+        while (true) {
+            System.out.println("\nBanking Menu:");
+            System.out.println("1. Deposit");
+            System.out.println("2. Display Balance");
+            if (account instanceof SavAcct) {
+                System.out.println("3. Compute and Deposit Interest");
+            }
+            System.out.println("4. Withdraw");
+            System.out.println("5. Exit");
+            System.out.print("Select an option: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter amount to deposit: ");
+                    double depositAmount = scanner.nextDouble();
+                    account.deposit(depositAmount);
+                    break;
+                case 2:
+                    account.displayBalance();
+                    break;
+                case 3:
+                    if (account instanceof SavAcct) {
+                        ((SavAcct) account).computeAndDepositInterest();
+                    } else {
+                        System.out.println("Option not available for current accounts.");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter amount to withdraw: ");
+                    double withdrawAmount = scanner.nextDouble();
+                    if (account instanceof SavAcct) {
+                        ((SavAcct) account).withdraw(withdrawAmount);
+                    } else {
+                        ((CurAcct) account).withdraw(withdrawAmount);
+                    }
+                    break;
+                case 5:
+                    System.out.println("Thank you for using the bank system.");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
